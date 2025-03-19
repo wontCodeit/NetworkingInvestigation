@@ -16,18 +16,16 @@ public class Server
 
     private Server()
     {
-        // This has to be hard coded to my personal ipv4 address which is then entered client side, main goal is finding that automatically
-        // eventually hoping to find a way around making the host do port forwarding at all
-        _listener = new(IPAddress.Parse("127.0.0.1"), 32888);
-        //INVESTIGATIVE CODE
-        //EndPoint? EndPoint = _listener.LocalEndpoint;
-        //if (EndPoint == null)
-        //{
-        //    throw new Exception("Crash out");
-        //}
+        IPHostEntry? localHostIp = Dns.GetHostEntry(string.Empty);
+
+        // grabs the address, last one should be the ipv4 address
+        _listener = localHostIp?.AddressList.Last() is IPAddress ip ?
+            new(ip, 32888)
+          : new(IPAddress.Parse("127.0.0.1"), 32888);
+        Console.WriteLine(_listener?.LocalEndpoint.ToString());
 
         // TODO find out about backlog
-        _listener.Start();
+        _listener!.Start();
     }
 
     /// <summary>
