@@ -20,15 +20,17 @@ public class ServerAccess
         _client = new TcpClient();
     }
 
-    public void ConnectToServer(string username, string address = "127.0.0.1")
+    public void ConnectToServer(string username, string host, int port)
     {
         if (IsConnected || string.IsNullOrEmpty(username))
         {
             return;
         }
 
+        IPHostEntry? ting = Dns.GetHostEntry(host);
+
         // IP address, arbitrary port- TODO error checking, basically across the whole program...
-        _client.Connect(IPAddress.Parse(address), 32888);
+        _client.Connect(ting.AddressList.Last(), port);
         IsConnected = _client.Connected;
         PacketReader = new PacketReader(_client.GetStream());
 

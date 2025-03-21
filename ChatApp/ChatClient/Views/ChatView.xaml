@@ -26,7 +26,12 @@
                             UpdateSourceTrigger=PropertyChanged}"
                         MinHeight="30"/>
 
-            <TextBox Text="{Binding Address,
+            <TextBox Text="{Binding Host,
+                            UpdateSourceTrigger=PropertyChanged}"
+                        MinHeight="30"/>
+
+
+            <TextBox Text="{Binding Port,
                             UpdateSourceTrigger=PropertyChanged}"
                         MinHeight="30"/>
 

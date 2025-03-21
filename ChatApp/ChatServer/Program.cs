@@ -1,4 +1,4 @@
 ﻿using ChatServer;
 
 Console.WriteLine("Server Project started");
-Server.Instance.Start();
+Server.Start(28722);

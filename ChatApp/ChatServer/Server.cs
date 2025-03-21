@@ -12,16 +12,11 @@ public class Server
     private readonly List<Client> _clients = [];
     private readonly TcpListener _listener;
 
-    public static Server Instance { get; } = new Server();
+    public static Server Instance { get; private set; } = new(80);
 
-    private Server()
+    private Server(int port)
     {
-        IPHostEntry? localHostIp = Dns.GetHostEntry(string.Empty);
-
-        // grabs the address, last one should be the ipv4 address
-        _listener = localHostIp?.AddressList.Last() is IPAddress ip ?
-            new(ip, 32888)
-          : new(IPAddress.Parse("127.0.0.1"), 32888);
+        _listener = new(IPAddress.Parse("127.0.0.1"), port);
         Console.WriteLine(_listener?.LocalEndpoint.ToString());
 
         // TODO find out about backlog
@@ -31,12 +26,13 @@ public class Server
     /// <summary>
     /// Infinite loop of receiving new connections to the <see cref="TcpListener"/> in this server instance.
     /// </summary>
-    public void Start()
+    public static void Start(int port)
     {
+        Instance = new(port);
         while (true)
         {
-            var client = Client.Create(_listener.AcceptTcpClient());
-            _clients.Add(client);
+            var client = Client.Create(Instance._listener.AcceptTcpClient());
+            Instance._clients.Add(client);
 
             Console.WriteLine($"[{DateTime.UtcNow} server:] Client connected at with username: {client.Username}");
             BroadcastConnection();

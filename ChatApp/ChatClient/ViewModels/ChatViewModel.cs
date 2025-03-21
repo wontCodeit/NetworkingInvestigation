@@ -15,7 +15,8 @@ public class ChatViewModel: ViewModelBase
     public RelayCommand SendMessageCommand { get; private set; }
     public string? Username { get; set; }
     public string? Message { get; set; }
-    public string? Address { get; set; }
+    public string? Host { get; set; }
+    public int? Port { get; set; }
 
     public ChatViewModel()
     {
@@ -24,7 +25,7 @@ public class ChatViewModel: ViewModelBase
         _serverAccess.ReceiveMessageEvent += OnMessageReceived;
         _serverAccess.UserDisconnectEvent += OnUserDisconnect;
 
-        ConnectCommand = new(o => _serverAccess.ConnectToServer(Username ?? "Formless", Address ?? "127.0.0.1"),
+        ConnectCommand = new(o => _serverAccess.ConnectToServer(Username ?? "Formless", Host ?? "127.0.0.1", Port ?? 80),
                              o => ValidateConnect(Username ?? string.Empty));
 
         SendMessageCommand = new(o => _serverAccess.SendMessage(Message ?? "None"),
@@ -75,6 +76,7 @@ public class ChatViewModel: ViewModelBase
     // how DRY is necessary? wondering if with lambdas there is a way to pass these more elegantly
     private bool ValidateConnect(string username) => !_serverAccess.IsConnected &&
                                                      !string.IsNullOrEmpty(username) &&
+                                                     !string.IsNullOrEmpty(Host) &&
                                                      !username.Contains('|');
 
     private bool ValidateSend(string sendString) => _serverAccess.IsConnected &&
